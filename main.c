@@ -35,7 +35,7 @@ int main ()
     listaNumeros[index]++;
   }
 
-  fprintf(f,"NUMERO;OCORRENCIAS\n");
+  fprintf(f,"NUMERO;OCORRENCIAS\n"); 
   // Imprimindo resultados
   for (int i = 0; i < 60; i++){
     printf("o numero %d foi sorteado %d vezes\n", i+1, listaNumeros[i]);
