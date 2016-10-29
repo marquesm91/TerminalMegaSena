@@ -2,10 +2,11 @@
 
 Gerar dados estatístico para o jogo Mega Sena.
 
-## Funcionalidades
+## O que deve ser feito
 
 Criar um programa na linguagem C sobre a MEGASENA com as seguintes funções:
 
+* ~~Gerar numeros aleatorios entre 1 e 60.~~
 * Gerar 3000 sorteios realmente aleatórios, em uma matriz, cada um com 6 números únicos (01 a 60).
 * Exibir os números por ordem do sorteio.
 * Exibir os números de cada sorteio em ordem crescente.
