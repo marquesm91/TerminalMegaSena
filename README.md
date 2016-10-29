@@ -1,6 +1,6 @@
 # Terminal Mega Sena
 
-Gerar dados estatístico para o jogo Mega Sena.
+Gerar dados estatísticos para o jogo Mega Sena.
 
 ## O que deve ser feito
 
