@@ -1,16 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #define TAM_SORTEIO 6
 #define TOTAL_NUM 60
 #define TOTAL_SORTEIO 3000
+#define TOTAL_JOGADOR 3
 
 struct Lista_numeros{
 	int numero;
 	int ocorrencias; // Quantas vezes ele apareceu nos sorteios
 	int ultimo_sorteio; // Ultima vez que apareceu nos sorteios
+	int sorteios_seguidos;
 };
+
+struct Jogadores{
+	char nome[20];
+	int bilhete[TAM_SORTEIO];
+	int melhor_resultado;
+	int numero_sorteio;
+}
 
 struct Melhores {
 	int numero1;
@@ -151,9 +161,6 @@ int aumenta_melhores(struct Melhores **melhores, int tamanho_atual, int novos_el
     	exit(-2);
     }
 
-    //printf("tamanho_melhores = %d\n", );
-
-
     return tamanho_total;
 }
 
@@ -189,6 +196,40 @@ void gera_sorteio(int inicio, int final, int sorteio[], struct Lista_numeros lis
 	}
 }
 
+void checa_sorteios_seguidos(struct Lista_numeros lista_numeros[], int sorteio[][TAM_SORTEIO], int inicio, int fim) {
+	int existe;
+	for(int i = inicio - 1; i < fim; i++){
+		for (int j = 0; j < TOTAL_NUM; j++) {
+			existe = 0;
+			for (int k = 0; k < TAM_SORTEIO; k++) {
+				if (lista_numeros[j].numero == sorteio[i][k]) {
+					lista_numeros[j].sorteios_seguidos = 0;
+					lista_numeros[j].ultimo_sorteio = i;
+					existe = 1;
+					break;
+				}
+			}
+
+			if (existe == 0) {
+				lista_numeros[j].sorteios_seguidos++;
+			}
+		}
+	}
+
+}
+
+void gravar_melhor_resultado(struct Jogadores jogadores[], int sorteios[][TAM_SORTEIO]) {
+	for(int i = 0; i < TOTAL_SORTEIO; i++) {
+		for (int j = 0; j < TAM_SORTEIO; j++) {
+			for (int k = 0; k < TOTAL_JOGADOR; k++) {
+				if (jogadores[k].bilhete[j] == sorteio[i][j]) { // acertou um numero
+					
+				}
+			}
+		}
+	}
+}
+
 int main ()
 {
 	FILE *arquivo = fopen("resultados.csv", "w+t");
@@ -200,11 +241,14 @@ int main ()
 
 	srand (time(NULL)); // Gerando seed para numeros randomicos
 	struct Lista_numeros lista_numeros[TOTAL_NUM];
+	struct Melhores *melhores = NULL;
+	struct Jogadors jogadores[TOTAL_JOGADOR];
+	int duplas[TOTAL_NUM][TOTAL_NUM];
 	int sorteios[TOTAL_SORTEIO][TAM_SORTEIO]; // TOTAL_SORTEIO sorteios de 6 numeros cada um
+	
+
 	int inicio = 1;
 	int final = TOTAL_NUM;
-	int duplas[TOTAL_NUM][TOTAL_NUM];
-	struct Melhores *melhores = NULL;
 	int tamanho_melhores = 0;
 
 	// Zerando valores da estrutura Lista_numeros
@@ -212,6 +256,7 @@ int main ()
 		lista_numeros[i].numero = i + 1;
 		lista_numeros[i].ocorrencias = 0;
 		lista_numeros[i].ultimo_sorteio = 0;
+		lista_numeros[i].sorteios_seguidos = 0;
 	}
 
 	// Zerando valores de cada numero do sorteio
@@ -228,12 +273,56 @@ int main ()
 		}
 	}
 
+	strcpy(jogadores[0].nome,"Jose");
+	strcpy(jogadores[1].nome,"Joao");
+	strcpy(jogadores[2].nome,"Maria");
+
+	jogadores[0].bilhete[0] = 7;
+	jogadores[0].bilhete[1] = 17;
+	jogadores[0].bilhete[2] = 12;
+	jogadores[0].bilhete[3] = 27;
+	jogadores[0].bilhete[4] = 45;
+	jogadores[0].bilhete[5] = 20;
+	jogadores[0].numero_sorteio = 0;
+	jogadores[0].melhor_resultado = 0;
+
+	jogadores[1].bilhete[0] = 5;
+	jogadores[1].bilhete[1] = 17;
+	jogadores[1].bilhete[2] = 12;
+	jogadores[1].bilhete[3] = 32;
+	jogadores[1].bilhete[4] = 45;
+	jogadores[1].bilhete[5] = 23;
+	jogadores[1].numero_sorteio = 0;
+	jogadores[1].melhor_resultado = 0;
+
+	jogadores[2].bilhete[0] = 2;
+	jogadores[2].bilhete[1] = 17;
+	jogadores[2].bilhete[2] = 13;
+	jogadores[2].bilhete[3] = 27;
+	jogadores[2].bilhete[4] = 47;
+	jogadores[2].bilhete[5] = 20;
+	jogadores[2].numero_sorteio = 0;
+	jogadores[2].melhor_resultado = 0;
+
 	// Gerando 3000 numeros aleatorios entre 1 e 60 e salvando suas ocorrencias
 	for (int i = 0; i < TOTAL_SORTEIO; i++){
 		gera_sorteio(inicio, final, sorteios[i], lista_numeros);
 		ordena_sorteio(sorteios[i]);
 		printf("Sorteio[%d] = ", i+1); imprime_sorteio(sorteios[i]);
 		gera_duplas(duplas, sorteios[i]);
+	}
+
+	checa_sorteios_seguidos(lista_numeros, sorteios, 1, 3000);
+
+	printf("Resultados no intervalo de sorteio de %d ate %d\n", 1, 3000);
+	for (int i = 0; i < TOTAL_NUM; i++) {
+		if(lista_numeros[i].sorteios_seguidos == 0) {
+			printf("numero = %d, saiu no ultimo sorteio\n", lista_numeros[i].numero);
+		}
+		else {
+			printf("numero = %d, nao sai a %d sorteios seguidos\n", lista_numeros[i].numero, lista_numeros[i].sorteios_seguidos);
+		}
+		
 	}
 
 	// Ordena a ocorrencia de cada numero em ordem decrescente
@@ -254,8 +343,11 @@ int main ()
 	ordena_melhores_duplas(melhores, tamanho_melhores);
 	imprime_melhores_duplas(melhores, 15);
 
-	if (melhores != NULL)
+	if (melhores != NULL) {
 		free(melhores);
+	}
+
+	gravar_melhor_resultado(jogadores, sorteios);
 
 	fclose(arquivo);
 	return 0;
